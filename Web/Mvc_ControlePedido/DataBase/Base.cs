@@ -32,16 +32,11 @@ namespace DataBase
 
         public void Atualizar()
         {
-            throw new NotImplementedException();
-        }
-
-        public void Buscar()
-        {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 List<string> where = new List<string>();
-                string chavePrimaria = string.Empty;
-                string nomeTabela = this.GetType().Name + "s";
+                string nomeChavePrimaria = string.Empty;
+                string valorChavePrimaria = string.Empty;
 
                 var propriedades = getPropriedade();
                 foreach (PropertyInfo item in propriedades)
@@ -52,29 +47,18 @@ namespace DataBase
                     {
                         if (opBase.ChavePrimaria)
                         {
-                            chavePrimaria = item.Name;
-                        }
-                        if (opBase.UsarParaBuscar || opBase.ChavePrimaria)
-                        {
-                            var valor = item.GetValue(this);
-                            if (valor != null)
-                            {
-                                where.Add(item.Name + " = '" + valor + "'");
-                            }
-                        }
-                        if (!string.IsNullOrEmpty(opBase.NomeTabela))
-                        {
-                            nomeTabela = Convert.ToString(item.GetValue(this));
+                            nomeChavePrimaria = item.Name;
+                            valorChavePrimaria = item.GetValue(this).ToString();
                         }
                     }
                 }
 
-                var queryString = "select * from " + nomeTabela +
-                                  " where " + chavePrimaria + " is not null ";
+                var queryString = "select * from " + getNomeTabela();
 
-                if (where.Count > 0)
+                if (!string.IsNullOrEmpty(nomeChavePrimaria) &&
+                    !string.IsNullOrEmpty(valorChavePrimaria))
                 {
-                    queryString += "and " + string.Join(" and ", where);
+                    queryString += " where " + nomeChavePrimaria + " = '" + valorChavePrimaria + "'";
                 }
                 else
                 {
@@ -92,25 +76,72 @@ namespace DataBase
             }
         }
 
-        public List<IBase> BuscarTodos()
+        public List<IBase> Buscar()
         {
             var aux = new List<IBase>();
-            string nomeTabela = this.GetType().Name + "s";
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
+                List<string> where = new List<string>();
+                string chavePrimaria = string.Empty;
+
                 var propriedades = getPropriedade();
+                OpcoesBase opBase = null;
                 foreach (PropertyInfo item in propriedades)
                 {
-                    OpcoesBase opBase = (OpcoesBase)item.GetCustomAttribute(typeof(OpcoesBase));
+                    opBase = (OpcoesBase)item.GetCustomAttribute(typeof(OpcoesBase));
 
-                    if (opBase != null && !string.IsNullOrEmpty(opBase.NomeTabela))
+                    if (opBase != null)
                     {
-                        nomeTabela = Convert.ToString(item.GetValue(this));
+                        if (opBase.ChavePrimaria)
+                        {
+                            chavePrimaria = item.Name;
+                        }
+                        if (opBase.UsarParaBuscar)
+                        {
+                            var valor = item.GetValue(this);
+                            if (valor != null)
+                            {
+                                where.Add(item.Name + " = '" + valor + "'");
+                            }
+                        }
                     }
                 }
 
-                string queryString = "select * from " + nomeTabela;
+                var queryString = "select * from " + getNomeTabela() +
+                                  " where " + chavePrimaria + " is not null ";
+
+                if (where.Count > 0)
+                {
+                    queryString += "and " + string.Join(" and ", where);
+                }
+                else
+                {
+                    throw new Exception("Para realizar a busca do(s) item(s), necessita-se de uma CHAVE referente ao objto NÃO NULA.");
+                }
+
+                SqlCommand command = new SqlCommand(queryString, connection);
+                command.Connection.Open();
+
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    var obj = (IBase)Activator.CreateInstance(this.GetType());
+                    setPropriedade(obj, reader);
+                    aux.Add(obj);
+                }
+            }
+
+            return aux;
+        }
+
+        public List<IBase> BuscarTodos()
+        {
+            var aux = new List<IBase>();
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                string queryString = "select * from " + getNomeTabela();
                 SqlCommand command = new SqlCommand(queryString, connection);
                 command.Connection.Open();
 
@@ -163,7 +194,6 @@ namespace DataBase
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 List<string> where = new List<string>();
-                string nomeTabela = this.GetType().Name + "s";
 
                 var propriedades = getPropriedade();
                 foreach (PropertyInfo item in propriedades)
@@ -178,14 +208,10 @@ namespace DataBase
                             if (valor != null)
                                 where.Add(item.Name + " = '" + item.GetValue(this) + "'");
                         }
-                        else if (!string.IsNullOrEmpty(opBase.NomeTabela))
-                        {
-                            nomeTabela = Convert.ToString(item.GetValue(this));
-                        }
                     }
                 }
 
-                var queryString = "delete from " + nomeTabela;
+                var queryString = "delete from " + getNomeTabela();
 
                 if (where.Count > 0)
                     queryString += " where " + string.Join("and ", where);
@@ -202,7 +228,6 @@ namespace DataBase
             {
                 List<string> campos = new List<string>();
                 List<string> valores = new List<string>();
-                string nomeTabela = this.GetType().Name + "s";
 
                 var propriedades = getPropriedade();
                 foreach (PropertyInfo item in propriedades)
@@ -216,14 +241,10 @@ namespace DataBase
                             campos.Add(item.Name);
                             valores.Add("'" + item.GetValue(this) + "'");
                         }
-                        else if (!string.IsNullOrEmpty(opBase.NomeTabela))
-                        {
-                            nomeTabela = Convert.ToString(item.GetValue(this));
-                        }
                     }
                 }
                 
-                var queryString = "insert into " + nomeTabela + " (" + string.Join(", ", campos) + ") " +
+                var queryString = "insert into " + getNomeTabela() + " (" + string.Join(", ", campos) + ") " +
                                   "values (" + string.Join(", ", valores) + ")";
                 SqlCommand command = new SqlCommand(queryString, connection);
                 command.Connection.Open();
@@ -233,7 +254,29 @@ namespace DataBase
 
         private PropertyInfo[] getPropriedade()
         {
-            return this.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+            return this.GetType().GetProperties(BindingFlags.Public   | 
+                                                BindingFlags.Instance | 
+                                                BindingFlags.NonPublic);
+        }
+
+        private TypeInfo getInfo()
+        {
+            return this.GetType().GetTypeInfo();
+        }
+
+        //Pegar a assinatura do Nome da tabela
+        private string getNomeTabela()
+        {
+            var info = getInfo();
+            OpcoesBase opBase = (OpcoesBase)info.GetCustomAttribute(typeof(OpcoesBase));
+            if (opBase != null)
+            {
+                if (!string.IsNullOrEmpty(opBase.NomeTabela))
+                {
+                    return opBase.NomeTabela;
+                }
+            }
+            return this.GetType().Name + "s";
         }
 
         private void setPropriedade(IBase obj, SqlDataReader reader)
@@ -246,7 +289,6 @@ namespace DataBase
                 if (opBase != null && opBase.UsarBancoDados && reader[item.Name] != DBNull.Value)
                 {
                     item.SetValue(obj, reader[item.Name]);
-                    //item.SetValue(obj, Convert.ChangeType(reader[item.Name], item.GetValue(this).GetType()));
                 }
             }
         }

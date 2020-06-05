@@ -13,6 +13,6 @@ namespace DataBase
         void Excluir();
         void Salvar();
         List<IBase> BuscarTodos();
-        void Buscar();
+        List<IBase> Buscar();
     }
 }

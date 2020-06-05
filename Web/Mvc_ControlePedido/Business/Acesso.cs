@@ -28,7 +28,7 @@ namespace Business
                 if (empresa == null && !string.IsNullOrEmpty(Cd_empresa))
                 {
                     empresa = new Empresa(Cd_empresa);
-                    empresa.Buscar();
+                    empresa.Atualizar();
                 }
                 return empresa;
             }

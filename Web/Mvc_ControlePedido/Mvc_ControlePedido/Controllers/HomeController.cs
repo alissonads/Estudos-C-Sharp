@@ -11,21 +11,28 @@ namespace Mvc_ControlePedido.Controllers
     {
         public ActionResult Index()
         {
-            var empresa = new Empresa() { Ativo = 1, Bairro = "Teste", Cd_empresa = "0000004", Cep = 102458962, Cnpj = "00000000000000",
-             Contato = "123 Testando", Email="teste.com.br", Endereco="Teste", Fantasia="Testando", Fone="(00) 00000000", Municipio="Teste", Nome="Testando 123",
-             Numero="0000", Uf="TS"};
-            // empresa.Salvar();
+            //var empresa = new Empresa() { Ativo = 1, Bairro = "Teste", Cd_empresa = "0000004", Cep = 102458962, Cnpj = "00000000000000",
+            // Contato = "123 Testando", Email="teste.com.br", Endereco="Teste", Fantasia="Testando", Fone="(00) 00000000", Municipio="Teste", Nome="Testando 123",
+            // Numero="0000", Uf="TS"};
+            //empresa.Salvar();
 
-            var acesso = new Acesso() { Cd_empresa = empresa.Cd_empresa, Id = 0, Login = "teste123", Nivel = "C", Senha="123456" };
-            acesso.Salvar();
+            //var acesso = new Acesso() { Cd_empresa = empresa.Cd_empresa, Id = 0, Login = "teste123", Nivel = "C", Senha="123456" };
+            //acesso.Salvar();
 
-            var emps = new Empresa().BuscarTodos();
+            //var emps = new Empresa().BuscarTodos();
 
-            var acessos = new Acesso().BuscarTodos();
+            //var acessos = new Acesso().BuscarTodos();
 
-            var emp = acesso.Empresa;
+            //var emp = acesso.Empresa;
 
-            acesso.Excluir();
+            //acesso.Excluir();
+
+            var pedido = (new Pedido("0000002"));
+            pedido.Atualizar();
+
+            var itens = pedido.Itens;
+
+            var material = ((ItemPedido)itens[1]).Material;
 
             return View();
         }
