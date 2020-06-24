@@ -1,0 +1,46 @@
+﻿@{
+    ViewBag.Title = "Login";
+}
+
+<div class="container body-content">
+    <h2>Login</h2>
+    <div class="row">
+        <div class="col-md-8">
+            <section>
+                <form action="" method="post" class="form-horizontal">
+                    <h4>Entre com seu usuário e senha</h4>
+                    <hr />
+
+                    <div class="form-group">
+                        <label class="col-md-2 control-label" for="usuario">Usuário</label>
+                        <div class="col-md-10">
+                            <input class="form-control" type="text" id="usuario" name="usuario" />
+                            <span class="field-validation-valid text-danger" id="usuario"
+                                  data-valmsg-for="usuario" data-valmsg-replace="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-md-2 control-label" for="senha">Senha</label>
+                        <div class="col-md-10">
+                            <input type="password" class="form-control" id="senha" name="senha" />
+                            <span class="field-validation-valid text-danger" id="senha"
+                                  data-valmsg-for="senha" data-valmsg-replace="true"></span>
+                        </div>
+                        <div class="form-group">
+                            <p class="col-md-offset-2 col-md-10"><a href="/Acessos/RedefinirSenha" style="font-size:Small;font-style:italic;">Esqueceu a senha?</a></p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <button type="submit" class="btn btn-default">Entrar</button>
+                        </div>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </div>
+
+    <span style="font-size: medium;"><p>Você não possui cadastro? <a href="/Acessos/Cadastro" style="font-size:Small;font-style:italic;">Cadastre-se</a></p></span>
+</div>

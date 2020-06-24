@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Configuration;
 using System.Reflection;
 using System.Data.SqlClient;
+using System.Data;
 
 namespace DataBase
 {
@@ -32,224 +33,219 @@ namespace DataBase
 
         public void Atualizar()
         {
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            var iodb = IODB.Connect(connectionString);
+            List<string> where = new List<string>();
+            string nomeChavePrimaria = string.Empty;
+            string valorChavePrimaria = string.Empty;
+
+            var propriedades = getPropriedade();
+            foreach (PropertyInfo item in propriedades)
             {
-                List<string> where = new List<string>();
-                string nomeChavePrimaria = string.Empty;
-                string valorChavePrimaria = string.Empty;
+                OpcoesBase opBase = (OpcoesBase)item.GetCustomAttribute(typeof(OpcoesBase));
 
-                var propriedades = getPropriedade();
-                foreach (PropertyInfo item in propriedades)
+                if (opBase != null)
                 {
-                    OpcoesBase opBase = (OpcoesBase)item.GetCustomAttribute(typeof(OpcoesBase));
-
-                    if (opBase != null)
+                    if (opBase.ChavePrimaria)
                     {
-                        if (opBase.ChavePrimaria)
-                        {
-                            nomeChavePrimaria = item.Name;
-                            valorChavePrimaria = item.GetValue(this).ToString();
-                        }
+                        nomeChavePrimaria = item.Name;
+                        valorChavePrimaria = item.GetValue(this).ToString();
                     }
                 }
-
-                var queryString = "select * from " + getNomeTabela();
-
-                if (!string.IsNullOrEmpty(nomeChavePrimaria) &&
-                    !string.IsNullOrEmpty(valorChavePrimaria))
-                {
-                    queryString += " where " + nomeChavePrimaria + " = '" + valorChavePrimaria + "'";
-                }
-                else
-                {
-                    throw new Exception("Para realizar a busca do item, necessita-se de uma CHAVE PRIMÁRIA NÃO NULA.");
-                }
-
-                SqlCommand command = new SqlCommand(queryString, connection);
-                command.Connection.Open();
-
-                SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    setPropriedade(this, reader);
-                }
             }
+
+            var queryString = "select * from " + getNomeTabela();
+
+            if (!string.IsNullOrEmpty(nomeChavePrimaria) &&
+                !string.IsNullOrEmpty(valorChavePrimaria))
+            {
+                queryString += " where " + nomeChavePrimaria + " = '" + valorChavePrimaria + "'";
+            }
+            else
+            {
+                throw new Exception("Para realizar a busca do item, necessita-se de uma CHAVE PRIMÁRIA NÃO NULA.");
+            }
+
+            SqlDataReader reader = iodb.ExecuteReturnReader(queryString);
+            while (reader.Read())
+            {
+                setPropriedade(this, reader);
+            }
+
+            iodb.Close();
         }
 
         public List<IBase> Buscar()
         {
             var aux = new List<IBase>();
+            var iodb = IODB.Connect(connectionString);
+            List<string> where = new List<string>();
+            string chavePrimaria = string.Empty;
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            var propriedades = getPropriedade();
+            OpcoesBase opBase = null;
+            foreach (PropertyInfo item in propriedades)
             {
-                List<string> where = new List<string>();
-                string chavePrimaria = string.Empty;
+                opBase = (OpcoesBase)item.GetCustomAttribute(typeof(OpcoesBase));
 
-                var propriedades = getPropriedade();
-                OpcoesBase opBase = null;
-                foreach (PropertyInfo item in propriedades)
+                if (opBase != null)
                 {
-                    opBase = (OpcoesBase)item.GetCustomAttribute(typeof(OpcoesBase));
-
-                    if (opBase != null)
+                    if (opBase.ChavePrimaria)
                     {
-                        if (opBase.ChavePrimaria)
+                        chavePrimaria = item.Name;
+                    }
+                    if (opBase.UsarParaBuscar)
+                    {
+                        var valor = item.GetValue(this);
+                        if (valor != null)
                         {
-                            chavePrimaria = item.Name;
-                        }
-                        if (opBase.UsarParaBuscar)
-                        {
-                            var valor = item.GetValue(this);
-                            if (valor != null)
-                            {
-                                where.Add(item.Name + " = '" + valor + "'");
-                            }
+                            where.Add(item.Name + " = '" + valor + "'");
                         }
                     }
                 }
-
-                var queryString = "select * from " + getNomeTabela() +
-                                  " where " + chavePrimaria + " is not null ";
-
-                if (where.Count > 0)
-                {
-                    queryString += "and " + string.Join(" and ", where);
-                }
-                else
-                {
-                    throw new Exception("Para realizar a busca do(s) item(s), necessita-se de uma CHAVE referente ao objto NÃO NULA.");
-                }
-
-                SqlCommand command = new SqlCommand(queryString, connection);
-                command.Connection.Open();
-
-                SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    var obj = (IBase)Activator.CreateInstance(this.GetType());
-                    setPropriedade(obj, reader);
-                    aux.Add(obj);
-                }
             }
+
+            var queryString = "select * from " + getNomeTabela() +
+                              " where " + chavePrimaria + " is not null ";
+
+            if (where.Count > 0)
+            {
+                queryString += "and " + string.Join(" and ", where);
+            }
+            else
+            {
+                throw new Exception("Para realizar a busca do(s) item(s), necessita-se de uma CHAVE referente ao objto NÃO NULA.");
+            }
+
+            SqlDataReader reader = iodb.ExecuteReturnReader(queryString);
+            while (reader.Read())
+            {
+                var obj = (IBase)Activator.CreateInstance(this.GetType());
+                setPropriedade(obj, reader);
+                aux.Add(obj);
+            }
+
+            iodb.Close();
 
             return aux;
         }
 
-        public List<IBase> BuscarTodos()
+        public virtual List<IBase> BuscarTodos()
         {
             var aux = new List<IBase>();
+            var iodb = IODB.Connect(connectionString);
+            string queryString = "select * from " + getNomeTabela();
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            SqlDataReader reader = iodb.ExecuteReturnReader(queryString);
+            while (reader.Read())
             {
-                string queryString = "select * from " + getNomeTabela();
-                SqlCommand command = new SqlCommand(queryString, connection);
-                command.Connection.Open();
-
-                SqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    var obj = (IBase)Activator.CreateInstance(this.GetType());
-                    setPropriedade(obj, reader);
-                    aux.Add(obj);
-                }
+                var obj = (IBase)Activator.CreateInstance(this.GetType());
+                setPropriedade(obj, reader);
+                aux.Add(obj);
             }
+
+            iodb.Close();
+
             return aux;
         }
-
-        //public static List<IBase> BuscarTodos(Type tipo)
-        //{
-        //    var aux = new List<IBase>();
-        //    string nomeTabela = tipo.Name + "s";
-
-        //    using (SqlConnection connection = new SqlConnection(connectionString))
-        //    {
-        //        var propriedades = tipo.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
-        //        foreach (PropertyInfo item in propriedades)
-        //        {
-        //            OpcoesBase opBase = (OpcoesBase)item.GetCustomAttribute(typeof(OpcoesBase));
-
-        //            if (opBase != null && !string.IsNullOrEmpty(opBase.NomeTabela))
-        //            {
-        //                nomeTabela = Convert.ToString(item.GetValue(tipo));
-        //            }
-        //        }
-
-        //        string queryString = "select * from " + nomeTabela;
-        //        SqlCommand command = new SqlCommand(queryString, connection);
-        //        command.Connection.Open();
-
-        //        SqlDataReader reader = command.ExecuteReader();
-        //        while (reader.Read())
-        //        {
-        //            var obj = (IBase)Activator.CreateInstance(tipo);
-        //            setPropriedade(obj, reader);
-        //            aux.Add(obj);
-        //        }
-        //    }
-        //    return aux;
-        //}
 
         public virtual void Excluir()
         {
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            var iodb = IODB.Connect(connectionString);
+            List<string> where = new List<string>();
+
+            var propriedades = getPropriedade();
+            foreach (PropertyInfo item in propriedades)
             {
-                List<string> where = new List<string>();
+                OpcoesBase opBase = (OpcoesBase)item.GetCustomAttribute(typeof(OpcoesBase));
 
-                var propriedades = getPropriedade();
-                foreach (PropertyInfo item in propriedades)
+                if (opBase != null)
                 {
-                    OpcoesBase opBase = (OpcoesBase)item.GetCustomAttribute(typeof(OpcoesBase));
-
-                    if (opBase != null)
+                    if (opBase.ChavePrimaria || opBase.UsarParaBuscar)
                     {
-                        if (opBase.ChavePrimaria || opBase.UsarParaBuscar)
-                        {
-                            var valor = item.GetValue(this);
-                            if (valor != null)
-                                where.Add(item.Name + " = '" + item.GetValue(this) + "'");
-                        }
+                        var valor = item.GetValue(this);
+                        if (valor != null)
+                            where.Add(item.Name + " = '" + item.GetValue(this) + "'");
                     }
                 }
-
-                var queryString = "delete from " + getNomeTabela();
-
-                if (where.Count > 0)
-                    queryString += " where " + string.Join("and ", where);
-
-                SqlCommand command = new SqlCommand(queryString, connection);
-                command.Connection.Open();
-                command.ExecuteNonQuery();
             }
+
+            var queryString = "delete from " + getNomeTabela();
+
+            if (where.Count > 0)
+                queryString += " where " + string.Join("and ", where);
+
+            iodb.Execute(queryString);
+            iodb.Close();
         }
 
         public void Salvar()
         {
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            var iodb = IODB.Connect(connectionString);
+            List<string> atributos = new List<string>();
+            List<string> valores = new List<string>();
+
+            var propriedades = getPropriedade();
+            foreach (PropertyInfo item in propriedades)
             {
-                List<string> campos = new List<string>();
-                List<string> valores = new List<string>();
+                OpcoesBase opBase = (OpcoesBase)item.GetCustomAttribute(typeof(OpcoesBase));
 
-                var propriedades = getPropriedade();
-                foreach (PropertyInfo item in propriedades)
+                if (opBase != null && opBase.UsarBancoDados && !opBase.AutoIncrementa)
                 {
-                    OpcoesBase opBase = (OpcoesBase)item.GetCustomAttribute(typeof(OpcoesBase));
-
-                    if (opBase != null)
+                    if (string.IsNullOrEmpty(this.Key))
                     {
-                        if (opBase.UsarBancoDados && !opBase.AutoIncrementa)
-                        {
-                            campos.Add(item.Name);
-                            valores.Add("'" + item.GetValue(this) + "'");
-                        }
+                        atributos.Add(item.Name);
+                        valores.Add(!opBase.ChavePrimaria ? 
+                                    "'" + verificarValor(item) + "'" :
+                                   "'" + (new GeradorCodigo(BuscarUltimoId().ToString())).Gerar(opBase.Max) + "'");
                     }
+                    else
+                    {
+                        if (opBase.ChavePrimaria)
+                            atributos.Add(item.Name + " = '" + item.GetValue(this) + "'");
+                        else
+                            valores.Add(item.Name + " = '" + verificarValor(item) + "'");
+                    }
+
                 }
-                
-                var queryString = "insert into " + getNomeTabela() + " (" + string.Join(", ", campos) + ") " +
-                                  "values (" + string.Join(", ", valores) + ")";
-                SqlCommand command = new SqlCommand(queryString, connection);
-                command.Connection.Open();
-                command.ExecuteNonQuery();
             }
+
+            var queryString = "insert into " + getNomeTabela() + " (" + string.Join(", ", atributos) + ") " +
+                              "values (" + string.Join(", ", valores) + ")";
+
+            if (!string.IsNullOrEmpty(this.Key) && this.Key != "0")
+            {
+                queryString = "update " + getNomeTabela() + " set " + string.Join(", ", valores) +
+                              " where " + string.Join(" and ", atributos);
+            }
+
+            iodb.Execute(queryString);
+            iodb.Close();
+        }
+
+        private object BuscarUltimoId()
+        {
+            var iodb = IODB.Connect(connectionString);
+            var propriedades = getPropriedade();
+            string chavePrimaria = string.Empty;
+
+            foreach (PropertyInfo item in propriedades)
+            {
+                OpcoesBase opBase = (OpcoesBase)item.GetCustomAttribute(typeof(OpcoesBase));
+
+                if (opBase != null && opBase.ChavePrimaria)
+                {
+                    chavePrimaria = item.Name;
+                }
+            }
+
+            string queryString = "select top(1)" + chavePrimaria + " from " + getNomeTabela() +
+                                 " where " + chavePrimaria + " is not null " +
+                                 "order by " + chavePrimaria + " desc";
+            
+            DataRow dr = iodb.ExecuteReturnTable(queryString).Rows[0];
+            iodb.Close();
+
+            return dr[0];
         }
 
         private PropertyInfo[] getPropriedade()
@@ -291,6 +287,19 @@ namespace DataBase
                     item.SetValue(obj, reader[item.Name]);
                 }
             }
+        }
+
+        /*
+         * Verifica se o tipo da propriedade é double ou decimal.
+         * Se for faz os devidos ajustes e retorna a string modificada.
+         * Se não retorna o valor.
+         */
+        private string verificarValor(PropertyInfo item)
+        {
+            if (item.PropertyType.Name == "Double" || item.PropertyType.Name == "Decimal")
+                return  item.GetValue(this).ToString().Replace(".", "").Replace(",", ".");
+            
+            return item.GetValue(this).ToString();
         }
     }
 }

@@ -42,7 +42,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Base.cs" />
+    <Compile Include="GeradorCodigo.cs" />
+    <Compile Include="GerenciadorDeDados.cs" />
     <Compile Include="IBase.cs" />
+    <Compile Include="IODB.cs" />
     <Compile Include="OpcoesBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

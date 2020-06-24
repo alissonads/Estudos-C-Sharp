@@ -11,9 +11,9 @@ namespace Business
     {
         private Empresa empresa;
 
-        [OpcoesBase(AutoIncrementa = true)]
+        [OpcoesBase(ChavePrimaria = true, AutoIncrementa = true)]
         public int Id { get; set; }
-        [OpcoesBase(ChavePrimaria = true, UsarParaBuscar = true, UsarBancoDados = true)]
+        [OpcoesBase(UsarParaBuscar = true, UsarBancoDados = true)]
         public string Login { get; set; }
         [OpcoesBase(UsarBancoDados = true)]
         public string Senha { get; set; }
@@ -39,12 +39,6 @@ namespace Business
         public Acesso(string login)
         {
             Login = login;
-        }
-
-        public override void Excluir()
-        {
-            base.Excluir();
-            Empresa.Excluir();
         }
     }
 }

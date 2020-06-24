@@ -9,7 +9,8 @@ namespace Business
 {
     public class Empresa : Base
     {
-        [OpcoesBase(ChavePrimaria = true, UsarBancoDados = true, UsarParaBuscar = true)]
+        [OpcoesBase(ChavePrimaria = true, UsarBancoDados = true, 
+                    UsarParaBuscar = true, Max = 7)]
         public string Cd_empresa { get; set; }
         [OpcoesBase(UsarBancoDados = true)]
         public string Cnpj { get; set; }
@@ -43,6 +44,22 @@ namespace Business
         public Empresa(string codigo)
         {
             Cd_empresa = codigo;
+        }
+
+        public static List<Empresa> Todos()
+        {
+            var aux = (new Empresa()).BuscarTodos();
+
+            if (aux.Count < 0) return null;
+
+            var pedidos = new List<Empresa>();
+
+            foreach (var item in aux)
+            {
+                pedidos.Add((Empresa)item);
+            }
+
+            return pedidos;
         }
     }
 }

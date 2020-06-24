@@ -12,7 +12,8 @@ namespace Business
         private Empresa cliente;
         private List<IBase> itens;
 
-        [OpcoesBase(ChavePrimaria = true, UsarParaBuscar = true)]
+        [OpcoesBase(ChavePrimaria = true, UsarParaBuscar = true, 
+                    UsarBancoDados = true, Max = 7)]
         public string Cd_pedido { get; set; }
         [OpcoesBase(UsarBancoDados = true)]
         public DateTime Dt_pedido { get; set; }
@@ -59,6 +60,24 @@ namespace Business
         public Pedido(string codigo)
         {
             Cd_pedido = codigo;
+        }
+
+        public static List<Pedido> Todos()
+        {
+            var aux = (new Pedido()).BuscarTodos();
+
+            if (aux.Count < 0) return null;
+
+            var pedidos = new List<Pedido>();
+
+            foreach (var item in aux)
+            {
+                pedidos.Add((Pedido)item);
+            }
+
+            return pedidos;
+
+            //return (new GerenciadorDeDados<Pedido>()).Buscar();
         }
     }
 }

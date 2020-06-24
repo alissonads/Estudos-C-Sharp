@@ -1,0 +1,172 @@
+﻿@{
+    ViewBag.Title = "Login";
+}
+
+<div class="jumbotron" style="font-size:16px;">
+    <div class="row">
+        <div class="col-md-10">
+            <h2 style="text-align:center;">Cadastro de Usuário</h2>
+        </div>
+
+        <div class="col-md-10">
+            <form action="/Acessos/Salvar" method="post" class="form-horizontal">
+                <hr style="border-color:white" />
+                <div class="col-md-10">
+                    <h3>Dados Empresa</h3>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-3 control-label" for="nomeEmpresa">Nome da Empresa:</label>
+                    <div class="col-md-8">
+                        <input class="form-control max-width" type="text" id="nomeEmpresa" name="nomeEmpresa" />
+                        <span class="field-validation-valid text-danger" id="nomeEmpresa"
+                              data-valmsg-for="nomeEmpresa" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-3 control-label" for="fantasia">Fantasia:</label>
+                    <div class="col-md-7">
+                        <input class="form-control" type="text" id="fantasia" name="fantasia" />
+                        <span class="field-validation-valid text-danger" id="fantasia"
+                              data-valmsg-for="fantasia" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-3 control-label" for="cnpj">CNPJ:</label>
+                    <div class="col-md-7">
+                        <input class="form-control" type="text" id="cnpj" name="cnpj" />
+                        <span class="field-validation-valid text-danger" id="cnpj"
+                              data-valmsg-for="cnpj" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+
+                <!--Telefone-->
+                <div class="form-group">
+                    <label class="col-md-3 control-label" for="telefone">Telefone:</label>
+                    <div class="col-md-3">
+                        <input class="form-control max-width" type="text" id="telefone" name="telefone" />
+                        <span class="field-validation-valid text-danger" id="telefone"
+                              data-valmsg-for="telefone" data-valmsg-replace="true"></span>
+                    </div>
+
+                    <label class="col-md-1 control-label" for="contato">Contato:</label>
+                    <div class="col-md-3">
+                        <input class="form-control max-width" type="text" id="contato" name="contato" />
+                        <span class="field-validation-valid text-danger" id="contato"
+                              data-valmsg-for="contato" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+                <!--------------->
+
+                <!--Email-->
+                <div class="form-group">
+                    <label class="col-md-3 control-label" for="email">Email:</label>
+                    <div class="col-md-8">
+                        <input class="form-control max-width" type="text" id="email" name="email" />
+                        <span class="field-validation-valid text-danger" id="email"
+                              data-valmsg-for="email" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+                <!--------------->
+
+                <!--Endereço-->
+                <hr style="border-color:white" />
+                <div class="col-md-10">
+                    <h3>Endereço da Empresa</h3>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-3 control-label" for="endereco">Endereço:</label>
+                    <div class="col-md-6">
+                        <input class="form-control max-width" type="text" id="endereco" name="endereco" />
+                        <span class="field-validation-valid text-danger" id="endereco"
+                              data-valmsg-for="endereco" data-valmsg-replace="true"></span>
+                    </div>
+                    <label class="col-md-1 control-label" for="numero">N°:</label>
+                    <div class="col-md-2">
+                        <input class="form-control" type="text" id="numero" name="numero" />
+                        <span class="field-validation-valid text-danger" id="numero"
+                              data-valmsg-for="numero" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-3 control-label" for="bairro">Bairro:</label>
+                    <div class="col-md-7">
+                        <input class="form-control max-width" type="text" id="bairro" name="bairro" />
+                        <span class="field-validation-valid text-danger" id="bairro"
+                              data-valmsg-for="bairro" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-3 control-label" for="cidade">Cidade:</label>
+                    <div class="col-md-5">
+                        <input class="form-control max-width" type="text" id="cidade" name="cidade" />
+                        <span class="field-validation-valid text-danger" id="cidade"
+                              data-valmsg-for="cidade" data-valmsg-replace="true"></span>
+                    </div>
+                    <label class="col-md-1 control-label" for="uf">UF</label>
+                    <div class="col-md-1">
+                        <input class="form-control" type="text" id="uf" name="uf" />
+                        <span class="field-validation-valid text-danger" id="uf"
+                              data-valmsg-for="uf" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-md-3 control-label" for="cep">CEP:</label>
+                    <div class="col-md-7">
+                        <input class="form-control" type="text" id="cep" name="cep" />
+                        <span class="field-validation-valid text-danger" id="cep"
+                              data-valmsg-for="cep" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+                <!--------------->
+                <hr style="border-color:white" />
+                <div class="col-md-10">
+                    <h3>Dados de Acesso</h3>
+                </div>
+
+                <!--Acesso-->
+                <div class="form-group">
+                    <label class="col-md-3 control-label" for="usuario">Usuário:</label>
+                    <div class="col-md-7">
+                        <input class="form-control" type="text" id="usuario" name="usuario" />
+                        <span class="field-validation-valid text-danger" id="usuario"
+                              data-valmsg-for="usuario" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label" for="senha">Senha:</label>
+                    <div class="col-md-3">
+                        <input class="form-control" type="password" id="senha" name="senha" />
+                        <span class="field-validation-valid text-danger" id="senha"
+                              data-valmsg-for="senha" data-valmsg-replace="true"></span>
+                    </div>
+                    <label class="col-md-2 control-label" for="confirmacao">Confirmação:</label>
+                    <div class="col-md-3">
+                        <input class="form-control" type="password" id="confirmacao" name="confirmacao" />
+                        <span class="field-validation-valid text-danger" id="confirmacao"
+                              data-valmsg-for="confirmacao" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+                <!--------------->
+
+                <hr style="border-color:white" />
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-default max-width">Salvar</button>
+                        </div>
+                        <div class="col-md-4 col-md-offset-2">
+                            <a href="/Acessos" class="btn btn-default max-width">Cancelar</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
