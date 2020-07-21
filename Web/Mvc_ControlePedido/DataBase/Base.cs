@@ -30,7 +30,7 @@ namespace DataBase
                 return null;
             }
         }
-
+        
         public void Atualizar()
         {
             var iodb = IODB.Connect(connectionString);
@@ -45,7 +45,7 @@ namespace DataBase
 
                 if (opBase != null)
                 {
-                    if (opBase.ChavePrimaria)
+                    if (opBase.ChavePrimaria || opBase.ChaveUnica)
                     {
                         nomeChavePrimaria = item.Name;
                         valorChavePrimaria = item.GetValue(this).ToString();
@@ -191,7 +191,7 @@ namespace DataBase
 
                 if (opBase != null && opBase.UsarBancoDados && !opBase.AutoIncrementa)
                 {
-                    if (string.IsNullOrEmpty(this.Key))
+                    if (string.IsNullOrEmpty(this.Key) || this.Key == "0")
                     {
                         atributos.Add(item.Name);
                         valores.Add(!opBase.ChavePrimaria ? 
@@ -200,7 +200,7 @@ namespace DataBase
                     }
                     else
                     {
-                        if (opBase.ChavePrimaria)
+                        if (opBase.ChavePrimaria || opBase.ChaveUnica)
                             atributos.Add(item.Name + " = '" + item.GetValue(this) + "'");
                         else
                             valores.Add(item.Name + " = '" + verificarValor(item) + "'");

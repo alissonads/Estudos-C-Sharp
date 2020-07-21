@@ -20,8 +20,48 @@ namespace Mvc_ControlePedido.Controllers
             return View();
         }
 
+        public ActionResult RedefinirSenha()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public void Buscar()
+        {
+            try
+            {
+                var acesso = new Acesso(Request["usuario"].ToString());
+                acesso.Atualizar();
+
+                Session["usuario"] = acesso.Login;
+
+                Response.Redirect("/Perfils");
+
+            }
+            catch
+            {
+                TempData["erro"] = "Usuário não encontrado.";
+                Response.Redirect("/Acessos");
+            }
+        }
+
         [HttpPost]
         public void Salvar()
+        {
+            switch (Request["acao"])
+            {
+                case "0":
+                    cadastrar();
+                    break;
+                case "1":
+                    recadastrarSenha();
+                    break;
+            }
+
+            Response.Redirect("/Acessos");
+        }
+
+        private void cadastrar()
         {
             if (Request["senha"] != Request["senha"])
             {
@@ -59,7 +99,22 @@ namespace Mvc_ControlePedido.Controllers
                 acesso.Salvar();
             }
 
-            Response.Redirect("/Acessos");
+        }
+
+        private void recadastrarSenha()
+        {
+            if (Request["senha"] != Request["senha"])
+            {
+                TempData["erro"] = "Senha e Confirmação de senha pecisão ser iguais.";
+            }
+            else
+            {
+                var acesso = new Acesso(Request["usuario"]);
+
+                acesso.Atualizar();
+                acesso.Senha = Request["senha"];
+                acesso.Salvar();
+            }
         }
     }
 }

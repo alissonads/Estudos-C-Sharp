@@ -1,0 +1,56 @@
+﻿@{
+    ViewBag.Title = "Redefinir Senha";
+}
+
+<div class="jumbotron" style="font-size:16px;">
+    <div class="row">
+        <div class="col-md-10">
+            <h2 style="text-align:center;">Redefinir Senha</h2>
+        </div>
+
+        <div class="col-md-10">
+            <form action="/Acessos/Salvar" method="post" class="form-horizontal">
+                <hr style="border-color:white" />
+
+                <input type="hidden" id="acao" name="acao" value="1" />
+
+                <!--Acesso-->
+                <div class="form-group">
+                    <label class="col-md-3 control-label" for="usuario">Usuário:</label>
+                    <div class="col-md-7">
+                        <input class="form-control" type="text" id="usuario" name="usuario" />
+                        <span class="field-validation-valid text-danger" id="usuario"
+                              data-valmsg-for="usuario" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label" for="senha">Senha:</label>
+                    <div class="col-md-3">
+                        <input class="form-control" type="password" id="senha" name="senha" />
+                        <span class="field-validation-valid text-danger" id="senha"
+                              data-valmsg-for="senha" data-valmsg-replace="true"></span>
+                    </div>
+                    <label class="col-md-2 control-label" for="confirmacao">Confirmação:</label>
+                    <div class="col-md-3">
+                        <input class="form-control" type="password" id="confirmacao" name="confirmacao" />
+                        <span class="field-validation-valid text-danger" id="confirmacao"
+                              data-valmsg-for="confirmacao" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+                <!--------------->
+
+                <hr style="border-color:white" />
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-default max-width">Salvar</button>
+                        </div>
+                        <div class="col-md-4 col-md-offset-2">
+                            <a href="/Acessos" class="btn btn-default max-width">Cancelar</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

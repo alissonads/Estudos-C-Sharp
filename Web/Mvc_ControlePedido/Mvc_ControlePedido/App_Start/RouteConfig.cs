@@ -26,9 +26,27 @@ namespace Mvc_ControlePedido
             );
 
             routes.MapRoute(
+                name: "Acessos-RedefinirSenha",
+                url: "Acessos/RedefinirSenha",
+                defaults: new { controller = "Acessos", action = "RedefinirSenha" }
+            );
+
+            routes.MapRoute(
                 name: "Acessos-Salvar",
                 url: "Acessos/Salvar",
                 defaults: new { controller = "Acessos", action = "Salvar" }
+            );
+
+            routes.MapRoute(
+                name: "Acessos-Buscar",
+                url: "Acessos/Buscar",
+                defaults: new { controller = "Acessos", action = "Buscar" }
+            );
+
+            routes.MapRoute(
+                name: "Perfils",
+                url: "Perfils",
+                defaults: new { controller = "Perfils", action = "Index" }
             );
 
             routes.MapRoute(

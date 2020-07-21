@@ -1,0 +1,33 @@
+﻿@{
+    ViewBag.Title = "Perfil";
+    Business.Acesso acesso = ViewBag.Acesso;
+    Business.Empresa empresa = acesso.Empresa;
+    var emp = empresa.Nome + (acesso.Nivel == "A" ? " - Administrador" : string.Empty);
+}
+
+<div class="container body-content">
+    <h3>Usuário: @acesso.Login</h3>
+    <p>Empresa: @emp</p>
+    <div class="row">
+        <div class="col-md-8">
+            <section>
+                <div class="form-horizontal">
+                    @if(acesso.Nivel == "A")
+                    {
+                        @Html.Partial("Admin");
+                    }
+                    else
+                    {
+                        @Html.Partial("Cliente");
+                    }
+
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-4">
+                            <a href="/Acessos" class="btn btn-default max-width">Sair</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>

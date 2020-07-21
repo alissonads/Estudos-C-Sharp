@@ -11,9 +11,9 @@ namespace Business
     {
         private Empresa empresa;
 
-        [OpcoesBase(ChavePrimaria = true, AutoIncrementa = true)]
+        [OpcoesBase(ChavePrimaria = true, UsarBancoDados = true, AutoIncrementa = true)]
         public int Id { get; set; }
-        [OpcoesBase(UsarParaBuscar = true, UsarBancoDados = true)]
+        [OpcoesBase(ChaveUnica = true, UsarParaBuscar = true, UsarBancoDados = true)]
         public string Login { get; set; }
         [OpcoesBase(UsarBancoDados = true)]
         public string Senha { get; set; }
