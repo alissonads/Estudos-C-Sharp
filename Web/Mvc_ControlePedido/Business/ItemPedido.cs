@@ -59,5 +59,21 @@ namespace Business
         {
             Cd_pedido = codigoPedido;
         }
+
+        public static List<ItemPedido> BuscarPorPedido(string cd_pedido)
+        {
+            var aux = new ItemPedido() { Cd_pedido = cd_pedido }.Buscar();
+
+            if (aux.Count < 0) return null;
+
+            var itens = new List<ItemPedido>();
+
+            foreach (var item in aux)
+            {
+                itens.Add((ItemPedido)item);
+            }
+
+            return itens;
+        }
     }
 }

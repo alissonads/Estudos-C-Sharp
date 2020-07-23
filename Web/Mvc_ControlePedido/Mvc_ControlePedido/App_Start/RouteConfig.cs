@@ -86,6 +86,30 @@ namespace Mvc_ControlePedido
             );
 
             routes.MapRoute(
+                name: "Pedidos",
+                url: "Pedidos",
+                defaults: new { controller = "Pedidos", action = "Index" }
+            );
+
+            routes.MapRoute(
+                name: "Pedidos-Novo",
+                url: "Pedidos/Novo",
+                defaults: new { controller = "Pedidos", action = "Novo" }
+            );
+
+            routes.MapRoute(
+                name: "Pedidos-Editar",
+                url: "Pedidos/Editar/{id}",
+                defaults: new { controller = "Pedidos", action = "Editar", id = string.Empty }
+            );
+
+            routes.MapRoute(
+                name: "ItensPedido",
+                url: "ItensPedido/{id}",
+                defaults: new { controller = "ItensPedido", action = "Index", id = string.Empty }
+            );
+
+            routes.MapRoute(
                 name: "Sobre",
                 url: "Sobre",
                 defaults: new { controller = "Home", action = "About" }

@@ -6,16 +6,25 @@
 <div class="jumbotron">
     <h3>Pedidos</h3>
     <!--Essa ação só deve estar ativa se for o acesso do cliente-->
-    <div>
-        <a href="/Pedidos/Novo" class="btn btn-default">Novo Pedido</a>
-    </div>
+    @if (ViewBag.NivelAcesso == "A")
+    {
+        <div>
+            <a href="/Pedidos/Novo" class="btn btn-default">Novo Pedido</a>
+        </div>
+    }
 
     <table class="table">
         <tr>
             <td>Código</td>
-            <td>Descrição</td>
-            <td>Un. Medida</td>
-            <td>Valor Unitário</td>
+            <td>DT Pedido</td>
+            @if (ViewBag.NivelAcesso == "A")
+            {
+                <td>Cliente</td>
+            }
+            <td>Total itens</td>
+            <td>Valor Total</td>
+            <td>DT Entrega</td>
+            <td>Situação</td>
         </tr>
 
         @foreach (var pedido in pedidos)
@@ -23,9 +32,12 @@
             <tr>
                 <td>@pedido.Cd_pedido</td>
                 <td>@pedido.Dt_pedido</td>
-                <td>@pedido.Cliente.Nome</td>
-                <td>@pedido.Valor_total</td>
+                @if (ViewBag.NivelAcesso == "A")
+                {
+                    <td>@pedido.Cliente.Nome</td>
+                }
                 <td>@pedido.Total_itens</td>
+                <td>@pedido.Valor_total</td>
 
                 <!--Para Clientes. Criar regra-->
                 <td>@pedido.Dt_entrega</td>
@@ -33,19 +45,30 @@
                 <!------------------------------>
                 <!--Opção de alterar somente para o admin-->
                 <td>
-                    <a href="/Pedidos/Detalhes/@pedido.Cd_pedido" class="btn btn-primary">Visualizar</a>
+                    <!--<a href="/Pedidos/Detalhes/@pedido.Cd_pedido" class="btn btn-primary">Visualizar</a>-->
+                    <a href="/ItensPedido/@pedido.Cd_pedido" class="btn btn-primary">Visualizar</a>
                 </td>
+
                 <td>
                     <a href="/Pedidos/Editar/@pedido.Cd_pedido" class="btn btn-primary">Alterar</a>
                 </td>
+
                 <!--Opção de Cancelar somente para o cliente-->
-                <td>
-                    <a href="/Pedidos/Cancelar/@pedido.Cd_pedido" class="btn btn-primary">Cancelar</a>
-                </td>
+                @if (ViewBag.NivelAcesso == "C")
+                {
+                    <td>
+                        <a href="/Pedidos/Cancelar/@pedido.Cd_pedido" class="btn btn-primary">Cancelar</a>
+                    </td>
+                }
+
+
                 <!--Opção de excluir somente para o admin-->
-                <td>
-                    <a href="/Pedidos/Excluir/@pedido.Cd_pedido" class="btn btn-danger">Excluir</a>
-                </td>
+                @if (ViewBag.NivelAcesso == "A")
+                {
+                    <td>
+                        <a href="/Pedidos/Excluir/@pedido.Cd_pedido" class="btn btn-danger">Excluir</a>
+                    </td>
+                }
             </tr>
         }
     </table>

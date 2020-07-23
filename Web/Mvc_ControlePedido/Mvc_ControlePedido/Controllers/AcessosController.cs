@@ -28,19 +28,25 @@ namespace Mvc_ControlePedido.Controllers
         [HttpPost]
         public void Buscar()
         {
-            try
+            if (string.IsNullOrEmpty(Request["usuario"].ToString()) ||
+                string.IsNullOrEmpty(Request["senha"].ToString()) )
             {
-                var acesso = new Acesso(Request["usuario"].ToString());
-                acesso.Atualizar();
-
-                Session["usuario"] = acesso.Login;
-
-                Response.Redirect("/Perfils");
-
+                TempData["erro"] = "Usuário ou Senha em branco.";
+                Response.Redirect("/Acessos");
+                return;
             }
-            catch
+
+            var acesso = new Acesso(Request["usuario"].ToString());
+            acesso.Atualizar();
+
+            if (acesso.Id != 0 && acesso.Senha == Request["senha"].ToString())
             {
-                TempData["erro"] = "Usuário não encontrado.";
+                Session["usuario"] = acesso.Login;
+                Response.Redirect("/Perfils");
+            }
+            else
+            {
+                TempData["erro"] = "Usuário ou Senha incorreto.";
                 Response.Redirect("/Acessos");
             }
         }

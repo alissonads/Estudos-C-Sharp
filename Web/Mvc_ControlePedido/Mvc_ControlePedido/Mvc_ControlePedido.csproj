@@ -170,8 +170,10 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AcessosController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ItensPedidoController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MateriaisController.cs" />
+    <Compile Include="Controllers\PedidosController.cs" />
     <Compile Include="Controllers\PerfilsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -250,6 +252,7 @@
     <Content Include="Views\Perfils\Index.cshtml" />
     <Content Include="Views\Perfils\Cliente.cshtml" />
     <Content Include="Views\Perfils\Admin.cshtml" />
+    <Content Include="Views\ItensPedido\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

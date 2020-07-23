@@ -1,36 +1,40 @@
 ﻿@{
-    ViewBag.Title = "Materiais";
+    ViewBag.Title = "Novo Pedido";
     List<Business.Material> materiais = ViewBag.Materiais;
 }
 
 <div class="jumbotron">
     <h3>Novo Material</h3>
     <div>
-        <a href="/Materiais" class="btn btn-default">Voltar</a>
+        <a href="/Pedidos" class="btn btn-default">Voltar</a>
     </div>
 
-    <form action="/Materiais/Cadastrar" method="post">
+    <form action="/Pedidos/Cadastrar" method="post">
         <div class="form-group">
-            <label for="descricao">Descrição</label>
-            <input type="text" class="form-control" id="descricao" name="descricao" />
+            <label for="descricao">Material: </label>
+        </div>
+
+        <div class="form-group">
+            <label for="valor_untario">Valor Unitário: </label>
         </div>
 
         <div class="form-group">
             <label for="un_medida">Un. Medida</label>
-            <select class="form-control" id="un_medida" name="un_medida">
-                <option value="0">...</option>
-                <option value="UN">UN</option>
-                <option value="KG">KG</option>
-                <option value="LT">LT</option>
-            </select>
         </div>
 
         <div class="form-group">
-            <label for="valor_unitatio">Valor Unitário</label>
-            <input type="text" class="form-control" id="valor_unitatio" name="valor_unitatio" />
+            <label for="quantidade">Quantidade</label>
         </div>
 
-        <button type="submit" class="btn btn-default">Salvar</button>
+        <div class="form-group">
+            <label for="valor_total">Valor Total</label>
+        </div>
+
+        <button type="submit" class="btn btn-default">incluir</button>
+
+        <div class="form-group">
+            <a href="/Pedidos" class="btn btn-default">Cancelar</a>
+        </div>
     </form>
 
 </div>

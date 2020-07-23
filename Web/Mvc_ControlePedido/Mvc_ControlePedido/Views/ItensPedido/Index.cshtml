@@ -1,0 +1,41 @@
+﻿@{
+    ViewBag.Title = "Itens Pedidos";
+    List<Business.ItemPedido> itens = ViewBag.Itens;
+}
+
+<div class="jumbotron">
+    <h3>Pedidos</h3>
+    <!--Essa ação só deve estar ativa se for o acesso do cliente-->
+    <!--<div>
+        <a href="/Pedidos/Novo" class="btn btn-default">Novo Pedido</a>
+    </div>-->
+
+    <table class="table">
+        <tr>
+            <td>Código</td>
+            <td>Descrição</td>
+            <td>Un Medida</td>
+            <td>Valor Un</td>
+            <td>Quantidade</td>
+            <td>Valor Total</td>
+        </tr>
+
+        @foreach (var item in itens)
+        {
+            <tr>
+                <td>@item.Cd_material</td>
+                <td>@item.Material.Descricao</td>
+                <td>@item.Material.Unidade_medida</td>
+                <td>@item.Material.Valor_unitario</td>
+                <td>@item.Quantidade</td>
+                <td>@item.Valor_total</td>
+            </tr>
+        }
+    </table>
+
+    <div class="form-group">
+        <span class="col-md-10">
+            <a href="/Pedidos" class="btn btn-default">Voltar</a>
+        </span>
+    </div>
+</div>
